@@ -1,0 +1,2 @@
+pytest>=7.0.0  # 测试框架
+pytest-html>=3.1.1  # 生成HTML测试报告
