@@ -1,0 +1,47 @@
+# 流程名称，会显示在 GitHub Actions 页面
+name: Python 自动测试流程
+
+# 触发条件：当代码推送到 main 分支，或有人提交 PR 到 main 分支时
+on:
+  push:
+    branches: [ main ]  # 监听 main 分支（如果你的仓库默认分支是 master，就改成 master）
+  pull_request:
+    branches: [ main ]
+
+# 定义要执行的任务
+jobs:
+  # 任务名称：build（可以自定义，比如 test）
+  build:
+    # 运行环境：使用最新的 Ubuntu 系统（免费）
+    runs-on: ubuntu-latest
+
+    # 步骤：按顺序执行的操作
+    steps:
+      # 步骤1：拉取代码到 CI 服务器
+      - name: 拉取代码
+        uses: actions/checkout@v4  # 这是 GitHub 提供的官方工具，用于拉取代码
+
+      # 步骤2：安装 Python 环境
+      - name: 安装 Python 3.10
+        uses: actions/setup-python@v5  # 官方工具，用于配置 Python 版本
+        with:
+          python-version: 3.10  # 指定 Python 版本（可以改 3.9、3.11 等）
+
+      # 步骤3：安装项目依赖（pytest 等）
+      - name: 安装依赖包
+        run: |  # 这里写要执行的命令（和终端里的命令一样）
+          python -m pip install --upgrade pip  # 升级 pip 工具
+          pip install -r requirements.txt  # 安装 requirements.txt 里的依赖
+
+      # 步骤4：运行测试并生成 HTML 报告
+      - name: 执行测试用例
+        run: |
+          pytest test.py --html=report.html  # 运行测试，生成 report.html 报告
+
+      # 步骤5：上传测试报告（即使测试失败也上传）
+      - name: 保存测试报告
+        uses: actions/upload-artifact@v4  # 官方工具，用于保存文件
+        if: always()  # 条件：无论前面步骤成功还是失败，都执行这一步
+        with:
+          name: 测试报告  # 报告的名称（在 GitHub 上显示）
+          path: report.html  # 要保存的文件路径
