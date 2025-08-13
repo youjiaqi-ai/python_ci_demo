@@ -13,7 +13,7 @@ jobs:
   # 任务名称：build（可以自定义，比如 test）
   build:
     # 运行环境：使用最新的 Ubuntu 系统（免费）
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     # 步骤：按顺序执行的操作
     steps:
